@@ -1,3 +1,5 @@
+# Codigo criado com ChatGPT, provavelmente não servirá para testar nenhum modelo de reconhecimento de objetos
+
 import cv2
 import numpy as np
 from keras.models import load_model
