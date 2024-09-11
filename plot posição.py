@@ -10,40 +10,34 @@ historico_de_posicoes = [[(370, 79), (306, 301), (784, 201), (643, 179), (246, 6
 23), (771, 937), (595, 640), (104, 540), (345, 883), (924, 839), (214, 456), (527, 471), (608, 715), (705, 890), (944, 580), (836, 737), (936, 922), (136, 453), (455, 955), 
 (914, 767), (859, 889), (427, 887), (720, 506), (173, 17), (853, 961), (944, 24), (774, 789), (574, 386), (721, 334), (742, 642), (455, 670)]]
 
+distancia_entre_latas = 20
 
-# FAZER A FUNÇÃO DEVOLVER TRUE OU FALSE CONFORME A ONTINUIDADE DO PONTO
-# def pontos_proximos_e_novos(historico_de_posicoes, a, PONTO):
-def pontos_proximos_e_novos(historico_de_posicoes, a, distancia):
-    pontos_proximos = []
-    pontos_novos = []
+def eh_lata_nova(frame, posicao):
 
     # Função para calcular a distância Euclidiana entre dois pontos (x1, y1) e (x2, y2)
     def calcular_distancia(p1, p2):
         return math.sqrt((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2)
-
+    
     # Iterar pelos pontos em historico_de_posicoes[a+1]
-    for ponto_b in historico_de_posicoes[a + 1]:
-        encontrou_proximo = False
-        # Verificar se há um ponto em historico_de_posicoes[a] dentro da distância mínima
-        for ponto_a in historico_de_posicoes[a]:
-            if calcular_distancia(ponto_a, ponto_b) <= distancia:
-                pontos_proximos.append(ponto_b)
-                encontrou_proximo = True
-                break
+    encontrou_proximo = False
+
+    # Verificar se há um ponto em historico_de_posicoes[a] dentro da distância mínima
+    for posicoes_anteriores in historico_de_posicoes[frame -1]:
+        if calcular_distancia(posicoes_anteriores, posicao) <= distancia_entre_latas:
+            return True
+
         # Se não encontrou nenhum ponto próximo, adicionar à lista de pontos novos
         if not encontrou_proximo:
-            pontos_novos.append(ponto_b)
+            return False
 
-    return pontos_proximos, pontos_novos
-
-def adicionar_ao_historico(lista, historico_de_posicoes, a):
+def adicionar_ao_historico(lista, a):
 
     if len(historico_de_posicoes) >= a:
         historico_de_posicoes.pop(0)
 
     historico_de_posicoes.append(lista)
 
-def plot_points(historico_de_posicoes):
+def plot_points():
     frame = 0
     lata = 0
     latas = []
@@ -73,32 +67,41 @@ def plot_points(historico_de_posicoes):
 
     print(f'Latas contadas: {latas}')
 
-def plotar_latas(historico_de_posicoes, a, distancia_entre_latas):
+def plotar_latas():
+    ultimo_frame = len(historico_de_posicoes) -1
+    print(f'ultimo frame: {ultimo_frame}')
+    # Caso seja o primeiro Frame
+    if ultimo_frame < 0:
+        
+        print('Sem Frames')
+        return
 
-    latas_confirmadas, latas_novas = pontos_proximos_e_novos(historico_de_posicoes, a, distancia_entre_latas)
+    if ultimo_frame == 0:
+        print("frame 1")
+        for lata in historico_de_posicoes[ultimo_frame]:
+            
+            plt.scatter(lata[0], lata[1], c='blue', label='Pontos')
+            return
+
+    print(f'frame {ultimo_frame+1}')
+    for lata in historico_de_posicoes[ultimo_frame]:
+        
+        foi_plotado = 0
+        if eh_lata_nova(ultimo_frame, lata):
+            plt.scatter(lata[0], lata[1], c='green', label='Pontos')
+            foi_plotado += 1
+        else:
+            plt.scatter(lata[0], lata[1], c='blue', label='Pontos')
+            foi_plotado += 1
     
-    for latas in latas_confirmadas:
-        plt.scatter(latas[0], latas[1], c='blue', label='Pontos')
+    print(f'latas plotadas: {foi_plotado}')
 
-    for latas in latas_novas:
-        plt.scatter(latas[0], latas[1], c='green', label='Pontos')
-
-
-    plt.title('centro das latas')
-    plt.xlabel('X')
-    plt.ylabel('Y')
+    plt.title('Posições das latas')
     plt.xlim(0, 1040)
     plt.ylim(992, 0) 
     plt.grid(True)
     plt.show()
 
-distancia_entre_latas = 20
+plotar_latas()
 
-frame = 0
-
-# plotar_latas(historico_de_posicoes, frame, distancia_entre_latas)
-
-plot_points(historico_de_posicoes)
-
-print(f'Frame 1: {len(historico_de_posicoes[0])}')
-print(f'Frame 2: {len(historico_de_posicoes[1])}')
+# plot_points(historico_de_posicoes)

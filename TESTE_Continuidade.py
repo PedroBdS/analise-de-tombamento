@@ -74,7 +74,8 @@ def salvar_matriz_em_arquivo(matriz, nome_arquivo):
             # Seleciona apenas os dois primeiros valores (x, y)
             linha_xy = linha[:2]
             linha_str = ', '.join(map(str, linha_xy))
-            lista.append(f'[{linha_str}],\n')
+            linha_str = eval(linha_str)
+            lista.append(linha_str)
         arquivo.write(str(lista))
 
 def is_new_detection(cx, cy):
@@ -115,7 +116,7 @@ cap = cv2.VideoCapture(VIDEO)
 background_subtractor = Subtractor(algorithm_type)
 
 cont = 0
-frames_analisados = 2
+frames_analisados = 3
 historico_de_posicoes = []
 
 while cont < frames_analisados:
@@ -164,7 +165,7 @@ while cont < frames_analisados:
     cont += 1
 
 
-# salvar_matriz_em_arquivo(circles, "posições.txt")
+salvar_matriz_em_arquivo(circles, "posições.txt")
 
 cap.release()
 cv2.destroyAllWindows()

@@ -5,8 +5,11 @@ from keras import layers, models
 import matplotlib.pyplot as plt
 import os
 
+tf.config.run_functions_eagerly(True)
+
+
 # Definir caminho para o dataset de latas tombadas
-train_dir = 'C:/Users/PBOTTARI/Downloads/dataset_latas_tombadas'  # Substitua pelo caminho correto
+train_dir = './dataset_latas_tombadas'  # Substitua pelo caminho correto
 
 # Definir parâmetros
 img_width, img_height = 150, 150  # Tamanho padrão para imagens
