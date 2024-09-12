@@ -5,7 +5,7 @@ import PIL.Image
 import numpy as np
 import matplotlib.pyplot as plt
 
-url = './dataset_latas_tombadas'
+url = './treino/dataset_latas_tombadas'
 
 data_dir = pathlib.Path(url)
 
@@ -17,6 +17,28 @@ print(subfolders)
 latatombada = list(data_dir.glob('tombada/*'))
 
 PIL.Image.open(str(latatombada[1]))
+
+def plota_resultados(history,epocas):
+  acc = history.history['accuracy']
+  val_acc = history.history['val_accuracy']
+
+  loss = history.history['loss']
+  val_loss = history.history['val_loss']
+
+  intervalo_epocas = range(epocas)
+  plt.figure(figsize=(12, 6))
+  plt.subplot(1, 2, 1)
+  plt.plot(intervalo_epocas, acc, label='Acurácia do Treino')
+  plt.plot(intervalo_epocas, val_acc, label='Acurácia da Validação')
+  plt.legend(loc='lower right')
+
+
+  plt.subplot(1, 2, 2)
+  plt.plot(intervalo_epocas, loss, label='Custo do Treino')
+  plt.plot(intervalo_epocas, val_loss, label='Custo da Validação')
+  plt.legend(loc='upper right')
+  plt.show()
+     
 
 for subfolder in subfolders:
   path = data_dir / subfolder
@@ -118,4 +140,5 @@ modelo_tflite_quantizado = converter.convert()
 with open('alura_tombamento_modelo.tflite', 'wb') as f:
     f.write(modelo_tflite_quantizado)
 
-# modelo_base.save('alura_tombamento_modelo.h5')
+plota_resultados(history,epocas)
+
