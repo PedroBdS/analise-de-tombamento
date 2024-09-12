@@ -5,7 +5,7 @@ import PIL.Image
 import numpy as np
 import matplotlib.pyplot as plt
 
-url = 'C:/Users/PBOTTARI/Documents/Python/tombamento/analise-se-tombamento/dataset_latas_tombadas'
+url = './dataset_latas_tombadas'
 
 data_dir = pathlib.Path(url)
 
@@ -72,17 +72,17 @@ data_augmentation = tf.keras.Sequential(
 
 input_shape = (150, 150, 3)
 
-modelo_base = tf.keras.applications.InceptionV3(input_shape=input_shape, include_top=False, weights='imagenet')
+modelo_base = tf.keras.applications.InceptionV3(input_shape=input_shape,include_top=False,weights='imagenet' )
 modelo_base.trainable = False
-
+     
 modelo_base.summary()
 
 rescale = tf.keras.layers.Rescaling((1./255))
-treino = treino.map(lambda x, y: (rescale(x),y))
-validacao = validacao.map(lambda x, y: (rescale(x),y))
+treino = treino.map(lambda x, y: (rescale(x), y))
+validacao = validacao.map(lambda x, y: (rescale(x), y))
 
 ultima_camada = modelo_base.get_layer('mixed7')
-print('ultima_camada',ultima_camada.output_shape)
+print('tamanho da última camada: ', ultima_camada.output_shape)
 ultima_saida = ultima_camada.output
 
 x = tf.keras.layers.Flatten()(ultima_saida)
@@ -91,22 +91,21 @@ x = tf.keras.layers.Dense(1024, activation='relu')(x)
 
 x = tf.keras.layers.Dropout(0.2)(x)
 
-x = tf.keras.layers.Dense(4, activation='softmax')(x)
+x = tf.keras.layers.Dense(4, activation=tf.nn.softmax)(x)
 
 modelo = tf.keras.Model(inputs=modelo_base.input,outputs=x)
 
-modelo.summary()
-
 modelo.compile(optimizer = tf.keras.optimizers.Adam(),
-                    loss = 'sparse_categorical_crossentropy',
-                    metrics=['accuracy'])
+              loss = 'sparse_categorical_crossentropy',
+              metrics=['accuracy'])
 
-epocas = 20
+epocas =10
 
 history = modelo.fit(
     treino,
     validation_data=validacao,
     epochs=epocas,
+
 )
 
 converter = tf.lite.TFLiteConverter.from_keras_model(modelo)
@@ -116,7 +115,7 @@ converter.target_spec.supported_types = [tf.float16]
 
 modelo_tflite_quantizado = converter.convert()
 
-with open('modelo_quantizado16bits.tflite', 'wb') as f:
+with open('alura_tombamento_modelo.tflite', 'wb') as f:
     f.write(modelo_tflite_quantizado)
 
 # modelo_base.save('alura_tombamento_modelo.h5')
