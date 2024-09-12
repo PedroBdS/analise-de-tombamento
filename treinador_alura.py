@@ -109,54 +109,14 @@ history = modelo.fit(
     epochs=epocas,
 )
 
-modelo_base.save('alura_tombamento_modelo.h5')
-# modelo = tf.keras.models.Sequential([
-#     tf.keras.layers.Input(shape=(150, 150, 3)),
-#     data_augmentation,
-#     tf.keras.layers.Rescaling(1./255),
-#     # Add convolutions and max pooling
-#     tf.keras.layers.Conv2D(32, (3,3), activation='relu'),
-#     tf.keras.layers.MaxPooling2D(2, 2),
-#     tf.keras.layers.Conv2D(32, (3,3), activation='relu'),
-#     tf.keras.layers.MaxPooling2D(2,2),
-#     tf.keras.layers.Flatten(),
-#     tf.keras.layers.Dense(128, activation=tf.nn.relu),
-#     tf.keras.layers.Dense(4, activation=tf.nn.softmax)
-# ])
+converter = tf.lite.TFLiteConverter.from_keras_model(modelo)
 
-# modelo.compile(optimizer = tf.keras.optimizers.Adam(),
-#               loss = 'sparse_categorical_crossentropy',
-#               metrics=['accuracy'])
+converter.optimizations = [tf.lite.Optimize.DEFAULT]
+converter.target_spec.supported_types = [tf.float16]
 
-# epocas = 50
+modelo_tflite_quantizado = converter.convert()
 
-# history = modelo.fit(
-#     treino,
-#     validation_data=validacao,
-#     epochs=epocas
-# )
-# print(modelo.summary())
+with open('modelo_quantizado16bits.tflite', 'wb') as f:
+    f.write(modelo_tflite_quantizado)
 
-# def plota_resultados(history,epocas):
-#     acc = history.history['accuracy']
-#     val_acc = history.history['val_accuracy']
-
-#     loss = history.history['loss']
-#     val_loss = history.history['val_loss']
-
-#     intervalo_epocas = range(epocas)
-#     plt.figure(figsize=(12, 6))
-#     plt.subplot(1, 2, 1)
-#     plt.plot(intervalo_epocas, acc, label='Acurácia do Treino')
-#     plt.plot(intervalo_epocas, val_acc, label='Acurácia da Validação')
-#     plt.legend(loc='lower right')
-
-
-#     plt.subplot(1, 2, 2)
-#     plt.plot(intervalo_epocas, loss, label='Custo do Treino')
-#     plt.plot(intervalo_epocas, val_loss, label='Custo da Validação')
-#     plt.legend(loc='upper right')
-#     plt.show()
-
-# plota_resultados(history,epocas)
-
+# modelo_base.save('alura_tombamento_modelo.h5')

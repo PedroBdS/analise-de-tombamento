@@ -2,7 +2,7 @@ import numpy as np
 import cv2
 import sys
 
-VIDEO = "C:/Users/pedro/Documents/Alura/Tombamento/teste5.mp4"
+VIDEO = './videos/Esteira_1.mp4'
 
 algorithm_types = ['KNN', 'GMG', 'CNT', 'MOG', 'MOG2']
 algorithm_type = algorithm_types[3]
